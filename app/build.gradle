@@ -50,20 +50,10 @@ dependencies {
     //CONSTRAINT LAYOUT
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
 
-    //TIMBER LOGGER
-    implementation 'com.jakewharton.timber:timber:4.5.1'
-
-    //GUAVA
-    implementation 'com.google.guava:guava:23.0'
-
     //BUTTER KNIFE
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'com.android.support:support-v4:26.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-
-    //LEAK CANARY
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
     //LIFE CYCLE EXTENSIONS
     implementation 'android.arch.lifecycle:extensions:1.0.0-rc1'

@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/stretchedHorizontally"
     android:layout_height="?attr/listPreferredItemHeight"
     android:background="?attr/selectableItemBackground"
-    android:foreground="?attr/selectableItemBackground"
-    android:focusable="true"
     android:clickable="true"
-    android:padding="@dimen/eight"
-    android:gravity="center_vertical"
-    android:orientation="vertical">
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/eight">
 
     <TextView
-        android:hint="@string/app_name"
         android:id="@+id/itemUserName"
-        style="@style/wrapContent" />
+        style="@style/wrapContent"
+        android:hint="@string/app_name" />
 
     <TextView
-        android:hint="@string/app_name"
         android:id="@+id/itemUserBloodGroup"
-        style="@style/wrapContent" />
+        style="@style/wrapContent"
+        android:hint="@string/app_name"
+        app:layout_constraintTop_toBottomOf="@id/itemUserName" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/itemUserStatus"
+        style="@style/wrapContent"
+        android:contentDescription="@string/imageBloodStatus"
+        android:src="@drawable/ic_help_outline_black_48px"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

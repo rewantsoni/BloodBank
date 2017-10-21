@@ -18,7 +18,7 @@ public interface BloodDao {
     @Query("Select * from bloodgroupentity where id = :id")
     LiveData<BloodGroupEntity> getBloodListById(int id);
 
-    @Query("Select * from bloodgroupentity where bloodgroup = :bloodGroup")
+    @Query("Select * from bloodgroupentity where bloodgroup like :bloodGroup")
     LiveData<List<BloodGroupEntity>> getBloodListByBloodGroup(String bloodGroup);
 
     @Insert
@@ -30,5 +30,6 @@ public interface BloodDao {
     @Update
     int updateBlood(BloodGroupEntity... bloodGroupEntities);
 
-
+    @Query("Update bloodgroupentity set approved = 1 where id = :id")
+    void aprroveEntry(int id);
 }

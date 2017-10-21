@@ -44,6 +44,10 @@ public class DbUtil {
         new UpdateTask(mAppDatabase).execute(bloodGroupEntities);
     }
 
+    public void approveEntry(int id){
+        new AprroveTask(mAppDatabase).execute(id);
+    }
+
     static class InsertTask extends AsyncTask<BloodGroupEntity,Void,long[]>{
 
         private AppDatabase innerAppDatabase;
@@ -104,6 +108,27 @@ public class DbUtil {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Log.d(TAG,"Deleted");
+        }
+    }
+
+    static class AprroveTask extends AsyncTask<Integer,Void,Void>{
+
+        private AppDatabase mAppDatabase;
+
+        AprroveTask(AppDatabase appDatabase){
+            mAppDatabase = appDatabase;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            mAppDatabase.getBloodDao().aprroveEntry(integers[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Log.d(TAG, "Entry approved");
         }
     }
 }

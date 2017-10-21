@@ -1,6 +1,22 @@
 <resources>
     <string name="app_name">BloodBank</string>
     <string name="addBlood">Add Blood</string>
+    <string name="adminLogin">Admin Login</string>
+    <string name="donateBlood">Donate Blood</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="cancel">Cancel</string>
+    <string name="passwordKey" translatable="false">1826</string>
+
+    <!-- ImageDescriptions-->
+    <string name="imageBloodStatus">BloodStatus</string>
+    <!-- -->
+
+    <!-- Admin-->
+    <string name="adminDialogTitle">Alert!</string>
+    <string name="adminDialogMessage">Are you sure you want ot make this entry verified</string>
+    <string name="yes">Yes</string>
+    <!-- -->
 
     <!-- BloodGroupFields-->
     <string name="bloodUserName">Name</string>
@@ -22,8 +38,10 @@
     <string name="errorNoUserName">I think you forgot the user name!</string>
     <string name="errorNoContactNo">We need your contact info</string>
     <string name="errorNoHospitalName">We can donate your blood anonymously</string>
+    <string name="errorIncorrectPassword">Incorrect Password</string>
+    <!-- -->
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- menuStrings-->
+    <string name="menuSearch">Search</string>
     <!-- -->
 </resources>

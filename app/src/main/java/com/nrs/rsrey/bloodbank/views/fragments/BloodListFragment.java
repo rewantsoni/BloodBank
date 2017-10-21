@@ -1,9 +1,9 @@
 package com.nrs.rsrey.bloodbank.views.fragments;
 
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -17,7 +17,7 @@ import com.nrs.rsrey.bloodbank.R;
 import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
 import com.nrs.rsrey.bloodbank.viewmodel.BloodViewModel;
 import com.nrs.rsrey.bloodbank.views.adapters.BloodListAdapter;
-import com.nrs.rsrey.bloodbank.views.fragments.dailogs.AddBloodDialogFragment;
+import com.nrs.rsrey.bloodbank.views.listeners.ItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +26,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class BloodListFragment extends Fragment {
+public class BloodListFragment extends Fragment implements ItemClickListener{
 
     @BindView(R.id.bloodList)RecyclerView mBloodListView;
-    @BindView(R.id.bloodListAdd)FloatingActionButton mAddBlood;
     private Unbinder mUnbinder;
     private List<BloodGroupEntity> mBloodList;
     private BloodViewModel mBloodViewModel;
@@ -41,7 +40,6 @@ public class BloodListFragment extends Fragment {
         mUnbinder  = ButterKnife.bind(this,view);
         mBloodViewModel = ViewModelProviders.of(this).get(BloodViewModel.class);
         initialize();
-        listeners();
         return view;
     }
 
@@ -53,7 +51,7 @@ public class BloodListFragment extends Fragment {
         mBloodListView.addItemDecoration(new DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
         mBloodListView.setHasFixedSize(true);
 
-        mBloodListAdapter = new BloodListAdapter(getActivity(),mBloodList);
+        mBloodListAdapter = new BloodListAdapter(getActivity(),mBloodList,this);
 
         mBloodListView.setAdapter(mBloodListAdapter);
 
@@ -63,12 +61,6 @@ public class BloodListFragment extends Fragment {
             mBloodListAdapter.notifyDataSetChanged();
         });
 
-    }
-
-    private void listeners(){
-        mAddBlood.setOnClickListener(v->{
-            new AddBloodDialogFragment().show(getFragmentManager(),"addBlood");
-        });
     }
 
     private void cleanUp(){
@@ -81,5 +73,21 @@ public class BloodListFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         cleanUp();
+    }
+
+    private void approveEntry(int id){
+        AlertDialog.Builder approveDialog = new AlertDialog.Builder(getActivity());
+        approveDialog.setTitle(getActivity().getResources().getString(R.string.adminDialogTitle))
+                .setMessage(getActivity().getResources().getString(R.string.adminDialogMessage))
+                .setNegativeButton(getActivity().getResources().getString(R.string.cancel), (dialog, which) -> {
+
+                })
+                .setPositiveButton(getActivity().getResources().getString(R.string.yes), (dialog, which) -> mBloodViewModel.approveEntry(id));
+        approveDialog.create().show();
+    }
+
+    @Override
+    public void onClick(int position) {
+        approveEntry(mBloodList.get(position).getId());
     }
 }

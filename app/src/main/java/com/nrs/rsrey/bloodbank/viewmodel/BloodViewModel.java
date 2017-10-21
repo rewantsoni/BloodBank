@@ -6,7 +6,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
 import com.nrs.rsrey.bloodbank.MyApplication;
-import com.nrs.rsrey.bloodbank.data.AppDatabase;
 import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
 import com.nrs.rsrey.bloodbank.utils.DbUtil;
 
@@ -45,5 +44,9 @@ public class BloodViewModel extends AndroidViewModel{
 
     public void deleteBlood(BloodGroupEntity... bloodGroupEntities){
         mDbutil.delete(bloodGroupEntities);
+    }
+
+    public void approveEntry(int id){
+        mDbutil.approveEntry(id);
     }
 }
