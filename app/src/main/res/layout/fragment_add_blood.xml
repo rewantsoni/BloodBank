@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/stretchedHorizontally"
+    android:orientation="vertical"
+    android:padding="@dimen/sixteen"
+    tools:context="com.nrs.rsrey.bloodbank.views.fragments.dailogs.AddBloodDialogFragment">
+
+    <EditText
+        style="@style/stretchedHorizontally"
+        android:id="@+id/bloodUserName"
+        android:hint="@string/bloodUserName" />
+
+    <EditText
+        android:id="@+id/bloodUserContact"
+        style="@style/stretchedHorizontally"
+        android:hint="@string/bloodUserContact" />
+
+    <EditText
+        style="@style/stretchedHorizontally"
+        android:id="@+id/bloodUserHospitalName"
+        android:hint="@string/bloodHospitalName" />
+
+    <Spinner
+        style="@style/stretchedHorizontally"
+        android:id="@+id/bloodUserGroup"/>
+
+    <Button
+        android:text="@string/addBlood"
+        style="@style/stretchedHorizontally"
+        android:id="@+id/bloodUserAdd" />
+
+</LinearLayout>

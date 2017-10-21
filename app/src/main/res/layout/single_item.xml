@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/stretchedHorizontally"
+    android:layout_height="?attr/listPreferredItemHeight"
+    android:background="?attr/selectableItemBackground"
+    android:foreground="?attr/selectableItemBackground"
+    android:focusable="true"
+    android:clickable="true"
+    android:padding="@dimen/eight"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <TextView
+        android:hint="@string/app_name"
+        android:id="@+id/itemUserName"
+        style="@style/wrapContent" />
+
+    <TextView
+        android:hint="@string/app_name"
+        android:id="@+id/itemUserBloodGroup"
+        style="@style/wrapContent" />
+
+</LinearLayout>

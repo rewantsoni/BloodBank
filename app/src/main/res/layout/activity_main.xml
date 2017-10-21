@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/matchParent"
+    tools:context="com.nrs.rsrey.bloodbank.views.MainActivity">
+
+    <include
+        android:id="@+id/mainToolbar"
+        layout="@layout/toolbar" />
+
+    <FrameLayout
+        android:id="@+id/mainContainer"
+        style="@style/matchParent"
+        android:layout_marginTop="?attr/actionBarSize" />
+
+</merge>

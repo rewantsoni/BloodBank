@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">BloodBank</string>
+    <string name="addBlood">Add Blood</string>
+
+    <!-- BloodGroupFields-->
+    <string name="bloodUserName">Name</string>
+    <array name="bloodGroups">
+        <item>AB+</item>
+        <item>AB-</item>
+        <item>A+</item>
+        <item>A-</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>O+</item>
+        <item>O-</item>
+    </array>
+    <string name="bloodUserContact">Phone No</string>
+    <string name="bloodHospitalName">Hospital Name</string>
+    <!-- -->
+
+    <!-- ErrorMessages-->
+    <string name="errorNoUserName">I think you forgot the user name!</string>
+    <string name="errorNoContactNo">We need your contact info</string>
+    <string name="errorNoHospitalName">We can donate your blood anonymously</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- -->
+</resources>

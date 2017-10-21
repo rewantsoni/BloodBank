@@ -1,0 +1,99 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+    defaultConfig {
+        applicationId "com.nrs.rsrey.bloodbank"
+        minSdkVersion 24
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //SUPPORT LIBRARY
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+
+    //RECYCLER VIEW
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+
+    //ANNOTATION SUPPORT LIBRARY
+    implementation 'com.android.support:support-annotations:26.1.0'
+
+    //DESIGN SUPPORT LIBRARY
+    implementation 'com.android.support:design:26.1.0'
+
+    //CONSTRAINT LAYOUT
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
+
+    //TIMBER LOGGER
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+
+    //GUAVA
+    implementation 'com.google.guava:guava:23.0'
+
+    //BUTTER KNIFE
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.android.support:support-v4:26.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //LEAK CANARY
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+
+    //LIFE CYCLE EXTENSIONS
+    implementation 'android.arch.lifecycle:extensions:1.0.0-rc1'
+
+    //LIFE CYCLE JAVA 8
+    implementation 'android.arch.lifecycle:common-java8:1.0.0-rc1'
+
+    //LIVE DATA BACKGROUND TEST
+    testImplementation 'android.arch.core:core-testing:1.0.0-rc1'
+
+    //LIVE DATA WITH REACTIVE STREAMS
+    implementation 'android.arch.lifecycle:reactivestreams:1.0.0-rc1'
+
+    //ROOM
+    implementation 'android.arch.persistence.room:runtime:1.0.0-rc1'
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0-rc1"
+
+    //ROOM TEST MIGRATION
+    testImplementation 'android.arch.persistence.room:testing:1.0.0-rc1'
+
+    //ROOM RxJAVA
+    implementation 'android.arch.persistence.room:rxjava2:1.0.0-rc1'
+
+    //PAGING
+    implementation 'android.arch.paging:runtime:1.0.0-alpha3'
+
+    //FIND BUG JSR 305
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}

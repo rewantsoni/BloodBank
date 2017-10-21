@@ -1,0 +1,19 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/matchParent"
+    tools:context="com.nrs.rsrey.bloodbank.views.fragments.BloodListFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bloodList"
+        style="@style/matchParent"/>
+
+    <android.support.design.widget.FloatingActionButton
+        style="@style/wrapContent"
+        android:layout_margin="@dimen/sixteen"
+        app:fabSize="normal"
+        android:id="@+id/bloodListAdd"
+        android:src="@drawable/ic_add_black_48px"
+        android:layout_gravity="bottom|end"/>
+
+</FrameLayout>
