@@ -66,6 +66,15 @@ import butterknife.Unbinder;
         });
     }
 
+        private void setFields(BloodGroupEntity bloodGroupEntity) {
+            if (bloodGroupEntity != null) {
+                mName.setText(bloodGroupEntity.getName());
+                mPhoneNo.setText(bloodGroupEntity.getContactNo());
+                mHospitalName.setText(bloodGroupEntity.getHospitalName());
+                //TODO
+            }
+        }
+
     private boolean verify() {
         if (mName.getText().toString().isEmpty()) {
             mName.setError(getActivity().getResources().getString(R.string.errorNoUserName));

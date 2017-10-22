@@ -7,8 +7,8 @@ import com.nrs.rsrey.bloodbank.data.AppDatabase;
 
 public class MyApplication extends Application{
 
+    private static final String DATABASE_NAME = "bloodDb";
     private AppDatabase mAppDatabase;
-    private static final String DATABSE_NAME = "bloodDb";
 
     @Override
     public void onCreate() {
@@ -17,7 +17,7 @@ public class MyApplication extends Application{
 
     public AppDatabase getAppDatabase(){
         if(mAppDatabase==null){
-            mAppDatabase = Room.databaseBuilder(this,AppDatabase.class,DATABSE_NAME).build();
+            mAppDatabase = Room.databaseBuilder(this, AppDatabase.class, DATABASE_NAME).build();
         }
         return mAppDatabase;
     }

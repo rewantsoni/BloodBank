@@ -1,16 +1,26 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/verticalLinearLayout"
-    android:gravity="center"
+    style="@style/stretchedHorizontally"
     tools:context="com.nrs.rsrey.bloodbank.views.fragments.StartFragment">
 
     <Button
         android:id="@+id/startAdminLogin"
         style="@style/stretchedHorizontally"
         android:text="@string/adminLogin" />
+
+    <Button
+        android:id="@+id/startGetBlood"
+        style="@style/wrapContent"
+        android:text="@string/getBlood"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/startAdminLogin" />
+
     <Button
         android:id="@+id/startDonateBlood"
-        style="@style/stretchedHorizontally"
-        android:text="@string/donateBlood" />
+        style="@style/wrapContent"
+        android:text="@string/donateBlood"
+        app:layout_constraintStart_toEndOf="@id/startGetBlood"
+        app:layout_constraintTop_toBottomOf="@id/startAdminLogin" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

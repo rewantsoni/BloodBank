@@ -3,6 +3,6 @@
     style="@style/stretchedHorizontally"
     android:hint="@string/password"
     android:imeOptions="actionDone"
-    android:inputType="numberPassword" />
+    android:inputType="textPassword" />
 
 

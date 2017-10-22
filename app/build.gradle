@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.nrs.rsrey.bloodbank"
-        minSdkVersion 24
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -20,6 +20,10 @@ android {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-DEBUG'
+        }
         release {
             shrinkResources true
             minifyEnabled true
@@ -29,6 +33,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes.each {
+        it.buildConfigField 'String', 'ADMIN_PASSWORD', ADMIN_PASSWORD
     }
 }
 

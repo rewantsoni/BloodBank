@@ -45,8 +45,4 @@ public class BloodViewModel extends AndroidViewModel{
     public void deleteBlood(BloodGroupEntity... bloodGroupEntities){
         mDbutil.delete(bloodGroupEntities);
     }
-
-    public void approveEntry(int id){
-        mDbutil.approveEntry(id);
-    }
 }

@@ -15,7 +15,8 @@
     <EditText
         android:id="@+id/bloodUserContact"
         style="@style/stretchedHorizontally"
-        android:hint="@string/bloodUserContact" />
+        android:hint="@string/bloodUserContact"
+        android:inputType="phone" />
 
     <EditText
         android:id="@+id/bloodUserHospitalName"

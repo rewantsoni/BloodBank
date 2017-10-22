@@ -18,6 +18,7 @@ import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
 import com.nrs.rsrey.bloodbank.viewmodel.BloodViewModel;
 import com.nrs.rsrey.bloodbank.views.adapters.BloodListAdapter;
 import com.nrs.rsrey.bloodbank.views.listeners.ItemClickListener;
+import com.nrs.rsrey.bloodbank.views.listeners.PopUpMenuClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SearchActivity extends AppCompatActivity implements ItemClickListener{
+public class SearchActivity extends AppCompatActivity implements ItemClickListener, PopUpMenuClickListener {
 
     private static final String TAG = SearchActivity.class.getSimpleName();
     @BindView(R.id.searchToolbar)Toolbar mSearchToolbar;
@@ -59,7 +60,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         mSearchList.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
         mSearchList.setHasFixedSize(true);
 
-        mBloodListAdapter = new BloodListAdapter(this,mSearchListEntity,this);
+        mBloodListAdapter = new BloodListAdapter(this, mSearchListEntity, this, this);
 
         mSearchList.setAdapter(mBloodListAdapter);
     }
@@ -90,7 +91,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
     }
 
     private void performSearch(String query){
-        mSearchListEntity =  mBloodViewModel.searchBloodByGroup(query + '%').getValue();;
+        mSearchListEntity = mBloodViewModel.searchBloodByGroup(query + "%").getValue();
         mBloodListAdapter.swapItem(mSearchListEntity);
         mBloodListAdapter.notifyDataSetChanged();
     }
@@ -103,6 +104,16 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
 
     @Override
     public void onClick(int position) {
+
+    }
+
+    @Override
+    public void edit(int position) {
+
+    }
+
+    @Override
+    public void delete(int position) {
 
     }
 }

@@ -3,6 +3,7 @@
     <string name="addBlood">Add Blood</string>
     <string name="adminLogin">Admin Login</string>
     <string name="donateBlood">Donate Blood</string>
+    <string name="getBlood">Get Blood</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="cancel">Cancel</string>
@@ -14,7 +15,8 @@
 
     <!-- Admin-->
     <string name="adminDialogTitle">Alert!</string>
-    <string name="adminDialogMessage">Are you sure you want ot make this entry verified</string>
+    <string name="adminDialogMessage">Are you sure you want to make this entry verified</string>
+    <string name="adminDialogMessageUndo">Are you sure you want to invalidate this entry</string>
     <string name="yes">Yes</string>
     <!-- -->
 
@@ -43,5 +45,12 @@
 
     <!-- menuStrings-->
     <string name="menuSearch">Search</string>
+    <string name="menuEdit">Edit</string>
+    <string name="menuDelete">Delete</string>
+    <!-- -->
+
+    <!-- dialogStrings-->
+    <string name="dialogDeleteTitle">Warning !</string>
+    <string name="dialogDeleteMessage">Are you sure you want to delete this entry</string>
     <!-- -->
 </resources>

@@ -29,7 +29,4 @@ public interface BloodDao {
 
     @Update
     int updateBlood(BloodGroupEntity... bloodGroupEntities);
-
-    @Query("Update bloodgroupentity set approved = 1 where id = :id")
-    void aprroveEntry(int id);
 }

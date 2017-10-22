@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
 import com.nrs.rsrey.bloodbank.viewmodel.BloodViewModel;
 import com.nrs.rsrey.bloodbank.views.adapters.BloodListAdapter;
 import com.nrs.rsrey.bloodbank.views.listeners.ItemClickListener;
+import com.nrs.rsrey.bloodbank.views.listeners.PopUpMenuClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +28,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class BloodListFragment extends Fragment implements ItemClickListener{
+public class BloodListFragment extends Fragment implements ItemClickListener, PopUpMenuClickListener {
 
+    private static final String TAG = BloodListFragment.class.getSimpleName();
     @BindView(R.id.bloodList)RecyclerView mBloodListView;
     private Unbinder mUnbinder;
     private List<BloodGroupEntity> mBloodList;
@@ -51,7 +54,7 @@ public class BloodListFragment extends Fragment implements ItemClickListener{
         mBloodListView.addItemDecoration(new DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
         mBloodListView.setHasFixedSize(true);
 
-        mBloodListAdapter = new BloodListAdapter(getActivity(),mBloodList,this);
+        mBloodListAdapter = new BloodListAdapter(getActivity(), mBloodList, this, this);
 
         mBloodListView.setAdapter(mBloodListAdapter);
 
@@ -75,19 +78,54 @@ public class BloodListFragment extends Fragment implements ItemClickListener{
         cleanUp();
     }
 
-    private void approveEntry(int id){
-        AlertDialog.Builder approveDialog = new AlertDialog.Builder(getActivity());
-        approveDialog.setTitle(getActivity().getResources().getString(R.string.adminDialogTitle))
-                .setMessage(getActivity().getResources().getString(R.string.adminDialogMessage))
+    private void editEntry(BloodGroupEntity bloodGroupEntity, String message, int approved) {
+        bloodGroupEntity.setApproved(1);
+        AlertDialog.Builder editDialog = new AlertDialog.Builder(getActivity());
+        editDialog.setTitle(getActivity().getResources().getString(R.string.adminDialogTitle))
+                .setMessage(message)
                 .setNegativeButton(getActivity().getResources().getString(R.string.cancel), (dialog, which) -> {
 
                 })
-                .setPositiveButton(getActivity().getResources().getString(R.string.yes), (dialog, which) -> mBloodViewModel.approveEntry(id));
-        approveDialog.create().show();
+                .setPositiveButton(getActivity().getResources().getString(R.string.yes), (dialog, which) -> {
+                    bloodGroupEntity.setApproved(approved);
+                    mBloodViewModel.updateBlood(bloodGroupEntity);
+                });
+        editDialog.create().show();
+    }
+
+    private void deleteEntry(BloodGroupEntity bloodGroupEntity) {
+        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getActivity());
+        deleteDialog.setTitle(getActivity().getResources().getString(R.string.dialogDeleteTitle))
+                .setMessage(getActivity().getResources().getString(R.string.dialogDeleteMessage))
+                .setNegativeButton(getActivity().getResources().getString(R.string.cancel), (dialog, which) -> {
+                })
+                .setPositiveButton(getActivity().getResources().getString(R.string.yes), (dialog, which) -> mBloodViewModel.deleteBlood(bloodGroupEntity));
+        deleteDialog.create().show();
+    }
+
+    private void updateEntry(BloodGroupEntity bloodGroupEntity) {
+        Log.d(TAG, "TODO");
+        //new AddBloodDialogFragment().show(getFragmentManager(), "addBlood");
     }
 
     @Override
     public void onClick(int position) {
-        approveEntry(mBloodList.get(position).getId());
+        BloodGroupEntity bloodGroupEntity = mBloodList.get(position);
+        if (bloodGroupEntity.getApproved() == 0) {
+            editEntry(bloodGroupEntity, getActivity().getResources().getString(R.string.adminDialogMessage), 1);
+        } else {
+            editEntry(bloodGroupEntity, getActivity().getResources().getString(R.string.adminDialogMessageUndo), 0);
+        }
     }
+
+    @Override
+    public void edit(int position) {
+        updateEntry(mBloodList.get(position));
+    }
+
+    @Override
+    public void delete(int position) {
+        deleteEntry(mBloodList.get(position));
+    }
+
 }
