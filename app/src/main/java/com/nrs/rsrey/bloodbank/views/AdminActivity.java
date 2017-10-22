@@ -36,7 +36,7 @@ public class AdminActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menuAdminSearch:
-                startActivity(new Intent(AdminActivity.this,SearchActivity.class));
+                startActivity(new Intent(AdminActivity.this, SearchActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

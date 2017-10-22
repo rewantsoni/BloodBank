@@ -53,4 +53,8 @@
     <string name="dialogDeleteTitle">Warning !</string>
     <string name="dialogDeleteMessage">Are you sure you want to delete this entry</string>
     <!-- -->
+
+    <!-- bundleStrings-->
+    <string name="bundleBloodGroupParcel">bundleBloodGroupParcel</string>
+    <!-- -->
 </resources>

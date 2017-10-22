@@ -9,15 +9,16 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.nrs.rsrey.bloodbank.R;
 import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
 import com.nrs.rsrey.bloodbank.viewmodel.BloodViewModel;
 import com.nrs.rsrey.bloodbank.views.adapters.BloodListAdapter;
+import com.nrs.rsrey.bloodbank.views.fragments.dailogs.AddBloodDialogFragment;
 import com.nrs.rsrey.bloodbank.views.listeners.ItemClickListener;
 import com.nrs.rsrey.bloodbank.views.listeners.PopUpMenuClickListener;
 
@@ -31,7 +32,8 @@ import butterknife.Unbinder;
 public class BloodListFragment extends Fragment implements ItemClickListener, PopUpMenuClickListener {
 
     private static final String TAG = BloodListFragment.class.getSimpleName();
-    @BindView(R.id.bloodList)RecyclerView mBloodListView;
+    @BindView(R.id.bloodList)
+    RecyclerView mBloodListView;
     private Unbinder mUnbinder;
     private List<BloodGroupEntity> mBloodList;
     private BloodViewModel mBloodViewModel;
@@ -39,19 +41,19 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_blood_list, container, false);
-        mUnbinder  = ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_blood_list, container, false);
+        mUnbinder = ButterKnife.bind(this, view);
         mBloodViewModel = ViewModelProviders.of(this).get(BloodViewModel.class);
         initialize();
         return view;
     }
 
-    private void initialize(){
+    private void initialize() {
         mBloodList = new ArrayList<>();
 
         mBloodListView.setItemAnimator(new DefaultItemAnimator());
         mBloodListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mBloodListView.addItemDecoration(new DividerItemDecoration(getActivity(),LinearLayoutManager.VERTICAL));
+        mBloodListView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         mBloodListView.setHasFixedSize(true);
 
         mBloodListAdapter = new BloodListAdapter(getActivity(), mBloodList, this, this);
@@ -66,7 +68,7 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
 
     }
 
-    private void cleanUp(){
+    private void cleanUp() {
         if (mUnbinder != null) {
             mUnbinder.unbind();
         }
@@ -79,7 +81,7 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
     }
 
     private void editEntry(BloodGroupEntity bloodGroupEntity, String message, int approved) {
-        bloodGroupEntity.setApproved(1);
+        bloodGroupEntity.setApproved(approved);
         AlertDialog.Builder editDialog = new AlertDialog.Builder(getActivity());
         editDialog.setTitle(getActivity().getResources().getString(R.string.adminDialogTitle))
                 .setMessage(message)
@@ -104,8 +106,14 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
     }
 
     private void updateEntry(BloodGroupEntity bloodGroupEntity) {
-        Log.d(TAG, "TODO");
-        //new AddBloodDialogFragment().show(getFragmentManager(), "addBlood");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(getActivity().getResources().getString(R.string.bundleBloodGroupParcel), bloodGroupEntity);
+
+        AddBloodDialogFragment addBloodDialogFragment = new AddBloodDialogFragment();
+        addBloodDialogFragment.setArguments(bundle);
+        addBloodDialogFragment.setTargetFragment(this, 1);
+
+        addBloodDialogFragment.show(getFragmentManager(), "addBlood");
     }
 
     @Override
@@ -120,7 +128,8 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
 
     @Override
     public void edit(int position) {
-        updateEntry(mBloodList.get(position));
+        Toast.makeText(getActivity(), "TODO", Toast.LENGTH_SHORT).show();
+        //updateEntry(mBloodList.get(position));
     }
 
     @Override

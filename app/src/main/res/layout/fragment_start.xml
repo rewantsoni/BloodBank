@@ -11,16 +11,14 @@
 
     <Button
         android:id="@+id/startGetBlood"
-        style="@style/wrapContent"
+        style="@style/stretchedHorizontally"
         android:text="@string/getBlood"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/startAdminLogin" />
 
     <Button
         android:id="@+id/startDonateBlood"
-        style="@style/wrapContent"
+        style="@style/stretchedHorizontally"
         android:text="@string/donateBlood"
-        app:layout_constraintStart_toEndOf="@id/startGetBlood"
-        app:layout_constraintTop_toBottomOf="@id/startAdminLogin" />
+        app:layout_constraintTop_toBottomOf="@id/startGetBlood" />
 
 </android.support.constraint.ConstraintLayout>

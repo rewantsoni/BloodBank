@@ -2,6 +2,7 @@ package com.nrs.rsrey.bloodbank.views.fragments.dailogs;
 
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -15,14 +16,16 @@ import android.widget.Spinner;
 import com.nrs.rsrey.bloodbank.R;
 import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
 import com.nrs.rsrey.bloodbank.viewmodel.BloodViewModel;
+import com.nrs.rsrey.bloodbank.views.fragments.BloodListFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-    public class AddBloodDialogFragment extends DialogFragment {
+public class AddBloodDialogFragment extends DialogFragment {
 
 
+    private static final String TAG = AddBloodDialogFragment.class.getSimpleName();
     @BindView(R.id.bloodUserName)
     EditText mName;
     @BindView(R.id.bloodUserContact)
@@ -35,6 +38,7 @@ import butterknife.Unbinder;
     Button mAdd;
     private Unbinder mUnbinder;
     private BloodViewModel mBloodViewModel;
+    private BloodListFragment mBloodListFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,6 +48,15 @@ import butterknife.Unbinder;
         initialize();
         listeners();
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mBloodListFragment = ((BloodListFragment) getTargetFragment());
+        if (mBloodListFragment != null && mBloodListFragment.getArguments() != null) {
+            setFields(mBloodListFragment.getArguments().getParcelable(getActivity().getResources().getString(R.string.bundleBloodGroupParcel)));
+        }
     }
 
     private void initialize() {
@@ -66,14 +79,13 @@ import butterknife.Unbinder;
         });
     }
 
-        private void setFields(BloodGroupEntity bloodGroupEntity) {
-            if (bloodGroupEntity != null) {
-                mName.setText(bloodGroupEntity.getName());
-                mPhoneNo.setText(bloodGroupEntity.getContactNo());
-                mHospitalName.setText(bloodGroupEntity.getHospitalName());
-                //TODO
-            }
+    private void setFields(BloodGroupEntity bloodGroupEntity) {
+        if (bloodGroupEntity != null) {
+            mName.setText(bloodGroupEntity.getName());
+            mPhoneNo.setText(bloodGroupEntity.getContactNo());
+            mHospitalName.setText(bloodGroupEntity.getHospitalName());
         }
+    }
 
     private boolean verify() {
         if (mName.getText().toString().isEmpty()) {

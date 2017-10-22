@@ -11,14 +11,14 @@ import com.nrs.rsrey.bloodbank.utils.DbUtil;
 
 import java.util.List;
 
-public class BloodViewModel extends AndroidViewModel{
+public class BloodViewModel extends AndroidViewModel {
 
     private LiveData<List<BloodGroupEntity>> mBloodList;
     private DbUtil mDbutil;
 
     public BloodViewModel(Application application) {
         super(application);
-        mDbutil = new DbUtil(((MyApplication)application).getAppDatabase());
+        mDbutil = new DbUtil(((MyApplication) application).getAppDatabase());
         mBloodList = mDbutil.getBloodList();
     }
 
@@ -26,23 +26,23 @@ public class BloodViewModel extends AndroidViewModel{
         return mBloodList;
     }
 
-    public LiveData<BloodGroupEntity> getBloodById(int id){
+    public LiveData<BloodGroupEntity> getBloodById(int id) {
         return mDbutil.getBloodListById(id);
     }
 
-    public LiveData<List<BloodGroupEntity>> searchBloodByGroup(String group){
+    public LiveData<List<BloodGroupEntity>> searchBloodByGroup(String group) {
         return mDbutil.searchBloodByGroup(group);
     }
 
-    public void insertBlood(BloodGroupEntity... bloodGroupEntities){
+    public void insertBlood(BloodGroupEntity... bloodGroupEntities) {
         mDbutil.insert(bloodGroupEntities);
     }
 
-    public void updateBlood(BloodGroupEntity... bloodGroupEntities){
+    public void updateBlood(BloodGroupEntity... bloodGroupEntities) {
         mDbutil.update(bloodGroupEntities);
     }
 
-    public void deleteBlood(BloodGroupEntity... bloodGroupEntities){
+    public void deleteBlood(BloodGroupEntity... bloodGroupEntities) {
         mDbutil.delete(bloodGroupEntities);
     }
 }

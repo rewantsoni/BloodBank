@@ -29,9 +29,12 @@ import butterknife.ButterKnife;
 public class SearchActivity extends AppCompatActivity implements ItemClickListener, PopUpMenuClickListener {
 
     private static final String TAG = SearchActivity.class.getSimpleName();
-    @BindView(R.id.searchToolbar)Toolbar mSearchToolbar;
-    @BindView(R.id.searchField)EditText mSearchField;
-    @BindView(R.id.searchList)RecyclerView mSearchList;
+    @BindView(R.id.searchToolbar)
+    Toolbar mSearchToolbar;
+    @BindView(R.id.searchField)
+    EditText mSearchField;
+    @BindView(R.id.searchList)
+    RecyclerView mSearchList;
     private List<BloodGroupEntity> mSearchListEntity;
     private BloodListAdapter mBloodListAdapter;
     private BloodViewModel mBloodViewModel;
@@ -57,7 +60,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
 
         mSearchList.setItemAnimator(new DefaultItemAnimator());
         mSearchList.setLayoutManager(new LinearLayoutManager(this));
-        mSearchList.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
+        mSearchList.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         mSearchList.setHasFixedSize(true);
 
         mBloodListAdapter = new BloodListAdapter(this, mSearchListEntity, this, this);
@@ -65,9 +68,9 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         mSearchList.setAdapter(mBloodListAdapter);
     }
 
-    private void listeners(){
+    private void listeners() {
         mSearchField.setOnEditorActionListener((v, actionId, event) -> {
-            if(actionId== EditorInfo.IME_ACTION_SEARCH){
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 performSearch(v.getText().toString());
             }
             return false;
@@ -90,10 +93,12 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         });
     }
 
-    private void performSearch(String query){
-        mSearchListEntity = mBloodViewModel.searchBloodByGroup(query + "%").getValue();
-        mBloodListAdapter.swapItem(mSearchListEntity);
-        mBloodListAdapter.notifyDataSetChanged();
+    private void performSearch(String query) {
+        mBloodViewModel.searchBloodByGroup(query.toUpperCase() + '%').observe(this, bloodGroupEntities -> {
+            mSearchListEntity = bloodGroupEntities;
+            mBloodListAdapter.swapItem(mSearchListEntity);
+            mBloodListAdapter.notifyDataSetChanged();
+        });
     }
 
     @Override

@@ -12,7 +12,8 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.mainToolbar)Toolbar mToolbar;
+    @BindView(R.id.mainToolbar)
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         initialize();
     }
 
-    private void initialize(){
+    private void initialize() {
         setSupportActionBar(mToolbar);
-        getSupportFragmentManager().beginTransaction().add(R.id.mainContainer,new StartFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.mainContainer, new StartFragment()).commit();
     }
 }

@@ -5,7 +5,7 @@ import android.arch.persistence.room.Room;
 
 import com.nrs.rsrey.bloodbank.data.AppDatabase;
 
-public class MyApplication extends Application{
+public class MyApplication extends Application {
 
     private static final String DATABASE_NAME = "bloodDb";
     private AppDatabase mAppDatabase;
@@ -15,8 +15,8 @@ public class MyApplication extends Application{
         super.onCreate();
     }
 
-    public AppDatabase getAppDatabase(){
-        if(mAppDatabase==null){
+    public AppDatabase getAppDatabase() {
+        if (mAppDatabase == null) {
             mAppDatabase = Room.databaseBuilder(this, AppDatabase.class, DATABASE_NAME).build();
         }
         return mAppDatabase;
