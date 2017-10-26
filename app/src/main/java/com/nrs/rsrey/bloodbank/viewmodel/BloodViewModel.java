@@ -18,7 +18,7 @@ public class BloodViewModel extends AndroidViewModel {
 
     public BloodViewModel(Application application) {
         super(application);
-        mDbutil = new DbUtil(((MyApplication) application).getAppDatabase());
+        mDbutil = ((MyApplication) application).getDbUtil();
         mBloodList = mDbutil.getBloodList();
     }
 
@@ -28,6 +28,10 @@ public class BloodViewModel extends AndroidViewModel {
 
     public LiveData<BloodGroupEntity> getBloodById(int id) {
         return mDbutil.getBloodListById(id);
+    }
+
+    public LiveData<List<BloodGroupEntity>> getApprovedBloodList() {
+        return mDbutil.getApprovedBloodList();
     }
 
     public LiveData<List<BloodGroupEntity>> searchBloodByGroup(String group) {

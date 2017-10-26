@@ -18,6 +18,9 @@ public interface BloodDao {
     @Query("Select * from bloodgroupentity where id = :id")
     LiveData<BloodGroupEntity> getBloodListById(int id);
 
+    @Query("Select * from bloodgroupentity where approved = 1")
+    LiveData<List<BloodGroupEntity>> getApprovedList();
+
     @Query("Select * from bloodgroupentity where bloodgroup like :bloodGroup")
     LiveData<List<BloodGroupEntity>> getBloodListByBloodGroup(String bloodGroup);
 

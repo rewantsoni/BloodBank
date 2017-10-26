@@ -11,8 +11,10 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.jakewharton.rxbinding2.view.RxView;
 import com.nrs.rsrey.bloodbank.R;
 import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
+import com.nrs.rsrey.bloodbank.views.MainActivity.ViewModelType;
 import com.nrs.rsrey.bloodbank.views.listeners.ItemClickListener;
 import com.nrs.rsrey.bloodbank.views.listeners.PopUpMenuClickListener;
 
@@ -20,19 +22,26 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class BloodListAdapter extends RecyclerView.Adapter<BloodListAdapter.MyViewHolder> {
 
     private final Context mContext;
     private final ItemClickListener mItemClickListener;
     private final PopUpMenuClickListener mPopUpMenuClickListener;
+    private final ViewModelType mViewModelType;
+    private final CompositeDisposable mCompositeDisposable;
     private List<BloodGroupEntity> mBloodList;
 
-    public BloodListAdapter(Context context, List<BloodGroupEntity> bloodList, ItemClickListener itemClickListener, PopUpMenuClickListener popUpMenuClickListener) {
-        this.mContext = context;
-        this.mBloodList = bloodList;
-        this.mItemClickListener = itemClickListener;
-        this.mPopUpMenuClickListener = popUpMenuClickListener;
+    public BloodListAdapter(Context context, List<BloodGroupEntity> bloodList
+            , ItemClickListener itemClickListener, PopUpMenuClickListener popUpMenuClickListener
+            , ViewModelType viewModelType) {
+        mContext = context;
+        mBloodList = bloodList;
+        mItemClickListener = itemClickListener;
+        mPopUpMenuClickListener = popUpMenuClickListener;
+        mViewModelType = viewModelType;
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
@@ -78,6 +87,17 @@ public class BloodListAdapter extends RecyclerView.Adapter<BloodListAdapter.MyVi
         popupMenu.show();
     }
 
+    private void cleanUp() {
+        mCompositeDisposable.clear();
+        mCompositeDisposable.dispose();
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        cleanUp();
+        super.onDetachedFromRecyclerView(recyclerView);
+    }
+
     class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.itemUserName)
         TextView mName;
@@ -89,13 +109,18 @@ public class BloodListAdapter extends RecyclerView.Adapter<BloodListAdapter.MyVi
         MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(v -> {
-                mItemClickListener.onClick(getAdapterPosition());
-            });
-            itemView.setOnLongClickListener(v -> {
-                inflatePopUpMenu(v, getAdapterPosition());
-                return false;
-            });
+            mCompositeDisposable.add(RxView.clicks(itemView).subscribe(v -> {
+                if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    mItemClickListener.onClick(getAdapterPosition());
+                }
+            }));
+            if (mViewModelType != ViewModelType.USER) {
+                mCompositeDisposable.add(RxView.longClicks(itemView).subscribe(v -> {
+                    if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        inflatePopUpMenu(itemView, getAdapterPosition());
+                    }
+                }));
+            }
         }
     }
 }

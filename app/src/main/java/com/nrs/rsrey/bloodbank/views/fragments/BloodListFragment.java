@@ -3,7 +3,9 @@ package com.nrs.rsrey.bloodbank.views.fragments;
 
 import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -12,15 +14,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.nrs.rsrey.bloodbank.BuildConfig;
+import com.nrs.rsrey.bloodbank.MyApplication;
 import com.nrs.rsrey.bloodbank.R;
 import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
 import com.nrs.rsrey.bloodbank.viewmodel.BloodViewModel;
+import com.nrs.rsrey.bloodbank.views.MainActivity.ViewModelType;
 import com.nrs.rsrey.bloodbank.views.adapters.BloodListAdapter;
 import com.nrs.rsrey.bloodbank.views.fragments.dailogs.AddBloodDialogFragment;
 import com.nrs.rsrey.bloodbank.views.listeners.ItemClickListener;
 import com.nrs.rsrey.bloodbank.views.listeners.PopUpMenuClickListener;
+import com.nrs.rsrey.bloodbank.views.listeners.SearchListener;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,18 +35,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class BloodListFragment extends Fragment implements ItemClickListener, PopUpMenuClickListener {
+public class BloodListFragment extends Fragment implements ItemClickListener, PopUpMenuClickListener, SearchListener {
 
-    private static final String TAG = BloodListFragment.class.getSimpleName();
     @BindView(R.id.bloodList)
     RecyclerView mBloodListView;
     private Unbinder mUnbinder;
     private List<BloodGroupEntity> mBloodList;
     private BloodViewModel mBloodViewModel;
     private BloodListAdapter mBloodListAdapter;
+    private Resources mResources;
+    private ViewModelType mViewModelType;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_blood_list, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mBloodViewModel = ViewModelProviders.of(this).get(BloodViewModel.class);
@@ -49,23 +56,44 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
     }
 
     private void initialize() {
+
+        if (getActivity() != null) {
+            mResources = getActivity().getResources();
+        }
+
         mBloodList = new ArrayList<>();
 
         mBloodListView.setItemAnimator(new DefaultItemAnimator());
         mBloodListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mBloodListView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        if (getActivity() != null) {
+            mBloodListView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        }
         mBloodListView.setHasFixedSize(true);
 
-        mBloodListAdapter = new BloodListAdapter(getActivity(), mBloodList, this, this);
+        if (getArguments() != null) {
+            int viewModel = getArguments().getInt(mResources.getString(R.string.bundleViewModelType));
+            mViewModelType = ViewModelType.values()[viewModel];
+            mBloodListAdapter = new BloodListAdapter(getActivity(), mBloodList, this, this, mViewModelType);
+            mBloodListView.setAdapter(mBloodListAdapter);
+            setViewModel(mViewModelType);
+        }
+    }
 
-        mBloodListView.setAdapter(mBloodListAdapter);
+    private void setViewModel(ViewModelType viewModelType) {
+        switch (viewModelType) {
+            case ADMIN:
+                mBloodViewModel.getBloodList().observe(this, this::swapList);
+                break;
+            case USER:
+                mBloodViewModel.getApprovedBloodList().observe(this, this::swapList);
+                break;
+        }
+    }
 
-        mBloodViewModel.getBloodList().observe(this, bloodGroupEntities -> {
-            mBloodList = bloodGroupEntities;
-            mBloodListAdapter.swapItem(mBloodList);
-            mBloodListAdapter.notifyDataSetChanged();
-        });
-
+    private void swapList(List<BloodGroupEntity> bloodGroupEntities) {
+        mBloodList = bloodGroupEntities;
+        mBloodListAdapter.swapItem(mBloodList);
+        mBloodListAdapter.notifyDataSetChanged();
     }
 
     private void cleanUp() {
@@ -78,9 +106,13 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
     public void onDestroy() {
         super.onDestroy();
         cleanUp();
+        if (getActivity() != null && BuildConfig.DEBUG) {
+            RefWatcher refWatcher = MyApplication.getRefWatcher(getActivity());
+            refWatcher.watch(this);
+        }
     }
 
-    private void editEntry(BloodGroupEntity bloodGroupEntity, String message, int approved) {
+    private void approveEntry(BloodGroupEntity bloodGroupEntity, String message, int approved) {
         bloodGroupEntity.setApproved(approved);
         AlertDialog.Builder editDialog = new AlertDialog.Builder(getActivity());
         editDialog.setTitle(getActivity().getResources().getString(R.string.adminDialogTitle))
@@ -105,31 +137,48 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
         deleteDialog.create().show();
     }
 
-    private void updateEntry(BloodGroupEntity bloodGroupEntity) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(getActivity().getResources().getString(R.string.bundleBloodGroupParcel), bloodGroupEntity);
+    private void editEntry(BloodGroupEntity bloodGroupEntity) {
+        if (getActivity() != null && getFragmentManager() != null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(getActivity().getResources().getString(R.string.bundleBloodGroupParcel), bloodGroupEntity);
 
-        AddBloodDialogFragment addBloodDialogFragment = new AddBloodDialogFragment();
-        addBloodDialogFragment.setArguments(bundle);
-        addBloodDialogFragment.setTargetFragment(this, 1);
+            AddBloodDialogFragment addBloodDialogFragment = new AddBloodDialogFragment();
+            addBloodDialogFragment.setArguments(bundle);
 
-        addBloodDialogFragment.show(getFragmentManager(), "addBlood");
+            addBloodDialogFragment.show(getFragmentManager(), "editBlood");
+        }
+    }
+
+    private void getBlood(BloodGroupEntity bloodGroupEntity) {
+        AlertDialog.Builder getBlood = new AlertDialog.Builder(getActivity());
+        getBlood.setTitle(mResources.getString(R.string.adminDialogTitle))
+                .setMessage(mResources.getString(R.string.userDialogMessage))
+                .setNegativeButton(mResources.getString(R.string.cancel), (dialogInterface, i) -> {
+                })
+                .setPositiveButton(mResources.getString(R.string.yes), (dialogInterface, i) -> mBloodViewModel.deleteBlood(bloodGroupEntity));
+        getBlood.create().show();
     }
 
     @Override
     public void onClick(int position) {
-        BloodGroupEntity bloodGroupEntity = mBloodList.get(position);
-        if (bloodGroupEntity.getApproved() == 0) {
-            editEntry(bloodGroupEntity, getActivity().getResources().getString(R.string.adminDialogMessage), 1);
+        if (mViewModelType == ViewModelType.USER) {
+            getBlood(mBloodList.get(position));
         } else {
-            editEntry(bloodGroupEntity, getActivity().getResources().getString(R.string.adminDialogMessageUndo), 0);
+            BloodGroupEntity bloodGroupEntity = mBloodList.get(position);
+            if (getActivity() != null) {
+                if (bloodGroupEntity.getApproved() == 0) {
+                    approveEntry(bloodGroupEntity, getActivity().getResources().getString(R.string.adminDialogMessage), 1);
+                } else {
+                    approveEntry(bloodGroupEntity, getActivity().getResources().getString(R.string.adminDialogMessageUndo), 0);
+                }
+            }
         }
     }
 
+
     @Override
     public void edit(int position) {
-        Toast.makeText(getActivity(), "TODO", Toast.LENGTH_SHORT).show();
-        //updateEntry(mBloodList.get(position));
+        editEntry(mBloodList.get(position));
     }
 
     @Override
@@ -137,4 +186,8 @@ public class BloodListFragment extends Fragment implements ItemClickListener, Po
         deleteEntry(mBloodList.get(position));
     }
 
+    @Override
+    public void search(String query) {
+        mBloodViewModel.searchBloodByGroup(query.toUpperCase() + '%').observe(this, this::swapList);
+    }
 }

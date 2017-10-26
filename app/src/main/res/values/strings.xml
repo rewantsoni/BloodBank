@@ -8,6 +8,9 @@
     <string name="login">Login</string>
     <string name="cancel">Cancel</string>
     <string name="passwordKey" translatable="false">1826</string>
+    <string name="thankYou">Thanks for the donation :)</string>
+    <string name="updated">Blood Group Entry Updated</string>
+    <string name="updateBlood">Update Entry</string>
 
     <!-- ImageDescriptions-->
     <string name="imageBloodStatus">BloodStatus</string>
@@ -18,6 +21,10 @@
     <string name="adminDialogMessage">Are you sure you want to make this entry verified</string>
     <string name="adminDialogMessageUndo">Are you sure you want to invalidate this entry</string>
     <string name="yes">Yes</string>
+    <!-- -->
+
+    <!-- User-->
+    <string name="userDialogMessage">Do you want to purchase this blood ?</string>
     <!-- -->
 
     <!-- BloodGroupFields-->
@@ -56,5 +63,6 @@
 
     <!-- bundleStrings-->
     <string name="bundleBloodGroupParcel">bundleBloodGroupParcel</string>
+    <string name="bundleViewModelType">bundleViewModelType</string>
     <!-- -->
 </resources>

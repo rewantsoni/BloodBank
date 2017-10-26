@@ -1,51 +1,40 @@
 package com.nrs.rsrey.bloodbank.views;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
+import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.nrs.rsrey.bloodbank.BuildConfig;
+import com.nrs.rsrey.bloodbank.MyApplication;
 import com.nrs.rsrey.bloodbank.R;
-import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
-import com.nrs.rsrey.bloodbank.viewmodel.BloodViewModel;
-import com.nrs.rsrey.bloodbank.views.adapters.BloodListAdapter;
-import com.nrs.rsrey.bloodbank.views.listeners.ItemClickListener;
-import com.nrs.rsrey.bloodbank.views.listeners.PopUpMenuClickListener;
+import com.nrs.rsrey.bloodbank.views.MainActivity.ViewModelType;
+import com.nrs.rsrey.bloodbank.views.fragments.BloodListFragment;
+import com.nrs.rsrey.bloodbank.views.listeners.SearchListener;
+import com.squareup.leakcanary.RefWatcher;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
-public class SearchActivity extends AppCompatActivity implements ItemClickListener, PopUpMenuClickListener {
+public class SearchActivity extends AppCompatActivity {
 
-    private static final String TAG = SearchActivity.class.getSimpleName();
     @BindView(R.id.searchToolbar)
     Toolbar mSearchToolbar;
     @BindView(R.id.searchField)
     EditText mSearchField;
-    @BindView(R.id.searchList)
-    RecyclerView mSearchList;
-    private List<BloodGroupEntity> mSearchListEntity;
-    private BloodListAdapter mBloodListAdapter;
-    private BloodViewModel mBloodViewModel;
-
+    private CompositeDisposable mCompositeDisposable;
+    private SearchListener mSearchListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
-        mBloodViewModel = ViewModelProviders.of(this).get(BloodViewModel.class);
         initialize();
         listeners();
     }
@@ -55,50 +44,27 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        mCompositeDisposable = new CompositeDisposable();
 
-        mSearchListEntity = new ArrayList<>();
+        BloodListFragment bloodListFragment = new BloodListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(getResources().getString(R.string.bundleViewModelType), ViewModelType.SEARCH.ordinal());
+        bloodListFragment.setArguments(bundle);
+        mSearchListener = bloodListFragment;
 
-        mSearchList.setItemAnimator(new DefaultItemAnimator());
-        mSearchList.setLayoutManager(new LinearLayoutManager(this));
-        mSearchList.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        mSearchList.setHasFixedSize(true);
-
-        mBloodListAdapter = new BloodListAdapter(this, mSearchListEntity, this, this);
-
-        mSearchList.setAdapter(mBloodListAdapter);
+        getSupportFragmentManager().beginTransaction().add(R.id.searchListContainer, bloodListFragment).commit();
     }
 
     private void listeners() {
-        mSearchField.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                performSearch(v.getText().toString());
+        mCompositeDisposable.add(RxTextView.textChanges(mSearchField).debounce(200, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(charSequence -> {
+            if (!charSequence.toString().isEmpty() && charSequence.toString().length() > 0) {
+                performSearch(charSequence.toString());
             }
-            return false;
-        });
-        mSearchField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                performSearch(s.toString());
-            }
-        });
+        }));
     }
 
     private void performSearch(String query) {
-        mBloodViewModel.searchBloodByGroup(query.toUpperCase() + '%').observe(this, bloodGroupEntities -> {
-            mSearchListEntity = bloodGroupEntities;
-            mBloodListAdapter.swapItem(mSearchListEntity);
-            mBloodListAdapter.notifyDataSetChanged();
-        });
+        mSearchListener.search(query);
     }
 
     @Override
@@ -107,18 +73,20 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         return super.onSupportNavigateUp();
     }
 
-    @Override
-    public void onClick(int position) {
-
+    private void cleanUp() {
+        if (mCompositeDisposable != null) {
+            mCompositeDisposable.clear();
+            mCompositeDisposable.dispose();
+        }
     }
 
     @Override
-    public void edit(int position) {
-
-    }
-
-    @Override
-    public void delete(int position) {
-
+    protected void onDestroy() {
+        super.onDestroy();
+        cleanUp();
+        if (BuildConfig.DEBUG) {
+            RefWatcher refWatcher = MyApplication.getRefWatcher(this);
+            refWatcher.watch(this);
+        }
     }
 }

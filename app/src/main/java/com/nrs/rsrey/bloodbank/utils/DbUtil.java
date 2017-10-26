@@ -1,21 +1,29 @@
 package com.nrs.rsrey.bloodbank.utils;
 
 import android.arch.lifecycle.LiveData;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import com.nrs.rsrey.bloodbank.data.AppDatabase;
 import com.nrs.rsrey.bloodbank.data.BloodGroupEntity;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
+
 
 public class DbUtil {
 
-    private static final String TAG = DbUtil.class.getSimpleName();
-
     private final AppDatabase mAppDatabase;
 
+    @Inject
     public DbUtil(AppDatabase appDatabase) {
         this.mAppDatabase = appDatabase;
     }
@@ -28,82 +36,76 @@ public class DbUtil {
         return mAppDatabase.getBloodDao().getBloodListById(id);
     }
 
+    public LiveData<List<BloodGroupEntity>> getApprovedBloodList() {
+        return mAppDatabase.getBloodDao().getApprovedList();
+    }
+
     public LiveData<List<BloodGroupEntity>> searchBloodByGroup(String group) {
         return mAppDatabase.getBloodDao().getBloodListByBloodGroup(group);
     }
 
     public void insert(BloodGroupEntity... bloodGroupEntities) {
-        new InsertTask(mAppDatabase).execute(bloodGroupEntities);
+        Single<long[]> single = Single.fromCallable(() -> mAppDatabase.getBloodDao().insertBlood(bloodGroupEntities)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        single.subscribe(new SingleObserver<long[]>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(long[] longs) {
+                for (long aLong : longs) {
+                    Timber.d(String.valueOf(aLong));
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.d(e.getMessage());
+            }
+        });
     }
 
     public void delete(BloodGroupEntity... bloodGroupEntities) {
-        new DeleteTask(mAppDatabase).execute(bloodGroupEntities);
+        Completable completable = Completable.fromCallable(() -> {
+            mAppDatabase.getBloodDao().deleteBlood(bloodGroupEntities);
+            return null;
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        completable.subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                Timber.d("Delete successful");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.d(e.getMessage());
+            }
+        });
     }
 
     public void update(BloodGroupEntity... bloodGroupEntities) {
-        new UpdateTask(mAppDatabase).execute(bloodGroupEntities);
-    }
+        Single<Integer> single = Single.fromCallable(() -> mAppDatabase.getBloodDao().updateBlood(bloodGroupEntities)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        single.subscribe(new SingleObserver<Integer>() {
+            @Override
+            public void onSubscribe(Disposable d) {
 
-    static class InsertTask extends AsyncTask<BloodGroupEntity, Void, long[]> {
-
-        private AppDatabase innerAppDatabase;
-
-        InsertTask(AppDatabase appDatabase) {
-            innerAppDatabase = appDatabase;
-        }
-
-        @Override
-        protected long[] doInBackground(BloodGroupEntity... bloodGroupEntities) {
-            return innerAppDatabase.getBloodDao().insertBlood(bloodGroupEntities);
-        }
-
-        @Override
-        protected void onPostExecute(long[] longs) {
-            super.onPostExecute(longs);
-            for (long aLong : longs) {
-                Log.d(TAG, String.valueOf(aLong));
             }
-        }
-    }
 
-    static class UpdateTask extends AsyncTask<BloodGroupEntity, Void, Integer> {
+            @Override
+            public void onSuccess(Integer integer) {
+                Timber.d(String.valueOf(integer));
+            }
 
-        private AppDatabase mAppDatabase;
-
-        UpdateTask(AppDatabase appDatabase) {
-            mAppDatabase = appDatabase;
-        }
-
-        @Override
-        protected Integer doInBackground(BloodGroupEntity... bloodGroupEntities) {
-            return mAppDatabase.getBloodDao().updateBlood(bloodGroupEntities);
-        }
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            Log.d(TAG, String.valueOf(integer));
-        }
-    }
-
-    static class DeleteTask extends AsyncTask<BloodGroupEntity, Void, Void> {
-
-        private AppDatabase mAppDatabase;
-
-        DeleteTask(AppDatabase appDatabase) {
-            mAppDatabase = appDatabase;
-        }
-
-        @Override
-        protected Void doInBackground(BloodGroupEntity... bloodGroupEntities) {
-            mAppDatabase.getBloodDao().deleteBlood(bloodGroupEntities);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Log.d(TAG, "Deleted");
-        }
+            @Override
+            public void onError(Throwable e) {
+                Timber.d(e.getMessage());
+            }
+        });
     }
 }

@@ -1,15 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.nrs.rsrey.bloodbank"
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        resConfigs "en"
+        splits {
+            abi {
+                enable true
+                reset()
+                include 'x86_64', 'x86', 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'mips'
+                universalApk false
+            }
+        }
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -40,27 +49,56 @@ android {
     }
 }
 
+ext.versionCodes = ['armeabi': 3, 'armeabi-v7a': 4, 'arm64-v8a': 5, mips: 6, 'x86': 7, 'x86_64': 8]
+import com.android.build.OutputFile
+
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        output.versionCodeOverride =
+                project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) * 1000 + android.defaultConfig.versionCode
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     //SUPPORT LIBRARY
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:27.0.0'
 
     //RECYCLER VIEW
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:27.0.0'
 
     //ANNOTATION SUPPORT LIBRARY
-    implementation 'com.android.support:support-annotations:26.1.0'
+    implementation 'com.android.support:support-annotations:27.0.0'
 
     //DESIGN SUPPORT LIBRARY
-    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support:design:27.0.0'
 
     //CONSTRAINT LAYOUT
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
 
+    //RX JAVA & ANDROID
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.4'
+
+    //RX BINDING
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-support-v4:2.0.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.0.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-design:2.0.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:2.0.0'
+
+    //TIMBER LOGGER
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+
+    //DAGGER 2
+    implementation 'com.google.dagger:dagger-android:2.11'
+    implementation 'com.google.dagger:dagger-android-support:2.11'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+
     //BUTTER KNIFE
     implementation 'com.jakewharton:butterknife:8.8.1'
-    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:support-v4:27.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     //LIFE CYCLE EXTENSIONS
@@ -90,6 +128,13 @@ dependencies {
 
     //FIND BUG JSR 305
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    //JET BRAINS ANNOTATIONS
+    implementation 'org.jetbrains:annotations:13.0'
+
+    //LEAK CANARY
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

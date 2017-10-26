@@ -1,8 +1,10 @@
 <EditText xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/adminLoginPassword"
     style="@style/stretchedHorizontally"
+    android:layout_margin="@dimen/sixteen"
     android:hint="@string/password"
     android:imeOptions="actionDone"
-    android:inputType="textPassword" />
+    android:inputType="textPassword"
+    android:padding="@dimen/eight" />
 
 

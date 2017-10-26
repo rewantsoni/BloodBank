@@ -4,22 +4,10 @@
     style="@style/matchParent"
     tools:context="com.nrs.rsrey.bloodbank.views.SearchActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/searchToolbar"
-        style="@style/toolbar">
+    <include layout="@layout/search_field" />
 
-        <EditText
-            android:id="@+id/searchField"
-            style="@style/matchParent"
-            android:background="@null"
-            android:hint="@string/menuSearch"
-            android:imeOptions="actionSearch"
-            android:maxLines="1" />
-
-    </android.support.v7.widget.Toolbar>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/searchList"
+    <FrameLayout
+        android:id="@+id/searchListContainer"
         style="@style/matchParent"
         android:layout_marginTop="?attr/actionBarSize" />
 

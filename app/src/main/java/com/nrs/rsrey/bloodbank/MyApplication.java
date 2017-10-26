@@ -1,24 +1,67 @@
 package com.nrs.rsrey.bloodbank;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
+import android.content.Context;
+import android.os.StrictMode;
+import android.support.annotation.NonNull;
 
-import com.nrs.rsrey.bloodbank.data.AppDatabase;
+import com.nrs.rsrey.bloodbank.dagger.components.DaggerDatabaseComponent;
+import com.nrs.rsrey.bloodbank.dagger.components.DatabaseComponent;
+import com.nrs.rsrey.bloodbank.dagger.modules.ContextModule;
+import com.nrs.rsrey.bloodbank.utils.DbUtil;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
+
+import timber.log.Timber;
 
 public class MyApplication extends Application {
 
-    private static final String DATABASE_NAME = "bloodDb";
-    private AppDatabase mAppDatabase;
+    private DbUtil mDbUtil;
+    private RefWatcher refWatcher;
+
+    public static RefWatcher getRefWatcher(@NonNull Context context) {
+        MyApplication application = (MyApplication) context.getApplicationContext();
+        return application.refWatcher;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree() {
+                @NonNull
+                @Override
+                protected String createStackElementTag(StackTraceElement element) {
+                    return super.createStackElementTag(element) + ":" + element.getLineNumber();
+                }
+            });
+            refWatcher = LeakCanary.install(this);
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+        }
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        moduleSetter();
     }
 
-    public AppDatabase getAppDatabase() {
-        if (mAppDatabase == null) {
-            mAppDatabase = Room.databaseBuilder(this, AppDatabase.class, DATABASE_NAME).build();
-        }
-        return mAppDatabase;
+    private void moduleSetter() {
+        setDatabaseComponent();
     }
+
+    private void setDatabaseComponent() {
+        DatabaseComponent databaseComponent = DaggerDatabaseComponent.builder().contextModule(new ContextModule(this)).build();
+        mDbUtil = databaseComponent.getDbUtil();
+    }
+
+    public DbUtil getDbUtil() {
+        return mDbUtil;
+    }
+
 }
